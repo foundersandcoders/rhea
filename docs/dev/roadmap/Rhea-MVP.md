@@ -20,9 +20,6 @@
 #### 1a1. Due Tasks
 
 #### 1a2. Other Tasks
-- [ ] 1a2b. Add dark mode to UI
-  - Should allow user to select light, dark or system
-  - requires generating dark palettes for each workflow
 - [ ] 1a2c. Workflow Card layout tweaks
   - 1a2c1. Icon & Title should be on same line
   - 1a2c2. Icon/Title line and button line should always be a uniform height across each card while fitting all content
@@ -125,6 +122,26 @@
 
 ### 4b. Completed Tasks
 #### 4b1. Record of Past Deadlines
+- [x] 4b1a. Add dark mode to UI ✅ COMPLETED (2025-10-29)
+  - **Branch:** `ui/dark-mode`
+  - **PR:** #30
+  - **Commits:** Merged via `125797d`
+  - **Summary:** Complete dark mode implementation with light/dark/system theme selection
+  - **Components:**
+    - ThemeSelector.svelte (102 lines) - Theme toggle UI component
+    - themeStore.ts (150 lines) - Theme state management with localStorage persistence
+    - Generated dark palettes for all five workflows (Rhea, Themis, Tethys, Metis, Theia)
+  - **Key Changes:**
+    - Enhanced palette build script to generate both light and dark variants
+    - CSS custom properties for theme-aware styling
+    - Automatic system preference detection
+    - User-selectable override (light/dark/system)
+    - Persistent theme preference across sessions
+  - **Impact:**
+    - 1,807 insertions, 272 deletions across 31 files
+    - All workflows now support dark mode
+    - Comprehensive documentation in `docs/dev/features/dark-mode.md`
+  - **Addresses:** Original task 1a2b
 
 #### 4b2. Record of Other Completed Tasks
 - [x] 4b2a. Create an xml output sanitiser

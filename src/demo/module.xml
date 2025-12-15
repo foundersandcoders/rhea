@@ -1,0 +1,25 @@
+<Module>
+	<ModuleName />
+	<ModuleProps>
+	  <ModuleMetadata /> <!-- versioning and changelog -->
+    <ModuleTemporal>
+      <StartDate />
+      <Weeks />
+      <DaysPerWeek />
+      <TotalDays />
+      <EndDate />
+    </ModuleTemporal>
+	</ModuleProps>
+
+	<ModuleContent>
+		<ModuleDescription />
+
+		<ModuleLearningObjectives>
+			<LearningObjective />
+		</ModuleLearningObjectives>
+
+		<ModuleKeyTopics>
+			<KeyTopic />
+		</ModuleKeyTopics>
+	</ModuleContent>
+</Module>

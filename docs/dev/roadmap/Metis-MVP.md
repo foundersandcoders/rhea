@@ -39,35 +39,7 @@
   - e.g. tech stack
 
 ### 1.2. Blocked Tasks
-- [-] 1.2.1. Allow web domain blacklist loading
-  - **Blockers** *(0/1)*
-    - [ ] 2.6
-  - **Notes**
-    - should apply to both Metis and Metis-in-Themis
-- [-] 1.2.2. Allow web domain blacklist creation
-  - **Blockers** *(0/1)*
-    - [ ] 2.6
-  - **Notes**
-    - should apply to both Metis and Metis-in-Themis
-- [-] 1.2.3. Allow web domain blacklist ignoring
-  - **Blockers** *(0/1)*
-    - [ ] 2.6
-  - **Notes**
-    - should apply to both Metis and Metis-in-Themis
-- [-] 1.2.4. Allow combining web domain blacklist/whitelist
-  - **Blockers** *(0/4)*
-    - [ ] 2.4
-    - [ ] 2.6
-    - [-] 1.2.1
-    - [-] 1.2.2
-  - **Notes**
-    - should apply to both Metis and Metis-in-Themis
-- [-] 1.2.5. Allow web domain whitelist creation
-  - **Blockers** *(0/1)*
-    - [ ] 2.4
-  - **Notes**
-    - should apply to both Metis and Metis-in-Themis
-- [-] 1.2.6. Allow creation of module spec sections
+- [-] 1.2.1. Allow creation of module spec sections
   - **Blockers**
     - [ ] 1.1.2.5
 
@@ -75,25 +47,19 @@
 
 ## 2. MVP Milestones
 - [ ] 2.1. Implement the "overview"/"full generation" options from Themis
-- [ ] 2.1. Allow granularity selection for module generation
+- [ ] 2.2. Allow granularity selection for module generation
   - For example, separate booleans at appropriate stage for project briefs, twists, research topics etc
   - After generation pass complete, allow user to either progress with existing detail or fill in missing detail levels
   - This should be applied in both Metis and Metis-in-Themis
-- [ ] 2.2. Implement Cascade Updates for Subsequent Modules
+- [ ] 2.3. Implement Cascade Updates for Subsequent Modules
   - [ ] Check for information in [About Rhea](docs/About-Rhea.md)
   - [ ] Check for information in [Executive Summary](docs/Executive-Summary.md)
   - [ ] Work with the user to define this feature
   - [ ] Record decisions in documentation
-- [ ] 2.3. Create Session Persistence
+- [ ] 2.4. Create Session Persistence
   - [ ] `localStorage` for progress backup
   - [ ] Restore on page load with confirmation
   - [ ] "Clear session" button
-- [ ] 2.4. Allow web domain whitelist selection
-  - should apply to both Metis and Metis-in-Themis
-- [ ] 2.5. Allow web domain whitelist ignoring
-  - should apply to both Metis and Metis-in-Themis
-- [ ] 2.6. Implement web domain blacklists
-  - should apply to both Metis and Metis-in-Themis
 
 ---
 
@@ -113,6 +79,36 @@
 
 ## 4. Work Record
 ### 4.1. Completed Milestones
+- [x] 4.1.10. Domain Whitelist Configuration System ✅ COMPLETED (2025-10-29)
+  - **Branch:** `metis/whitelist-definitions`
+  - **PR:** #31
+  - **Commits:** Merged via `8565614`
+  - **Summary:** Complete research domain configuration with hierarchical selection, blacklisting, and both Metis/Themis integration
+  - **Components:**
+    - DomainSelector.svelte (273 lines) - Category-based domain selection UI for Metis
+    - ResearchConfigSelector.svelte (229 lines) - Hierarchical arc/module domain configuration for Themis
+    - configResolver.ts (115 lines) - Resolves domain configuration with inheritance and overrides
+    - domainResolver.ts (151 lines) - Converts structured config to agent-ready domain lists
+    - domainValidator.ts (93 lines) - Validates domain configuration structure
+  - **Key Features:**
+    - ✅ Web domain whitelist selection (Metis and Themis)
+    - ✅ Web domain whitelist ignoring (override to use all research)
+    - ✅ Web domain blacklisting (exclusion list)
+    - ✅ Combining whitelist/blacklist logic
+    - ✅ Structured domain lists with categories (AI_RESEARCH_DOMAINS)
+    - ✅ Hierarchical configuration (course → arc → module)
+    - ✅ Configuration validation and resolution
+    - ✅ Default domain list (AI Engineering domains)
+  - **Integration:**
+    - Updated metisStores with domainConfig field
+    - Enhanced API endpoints (Metis and Themis) to accept domain configuration
+    - Modified agentClientFactory to apply domain filters to search tool
+    - Comprehensive ADR documentation in `docs/dev/architecture/domain-whitelist-adr.md`
+  - **Impact:**
+    - 2,811 insertions, 153 deletions across 46 files
+    - Addresses MVP milestones 2.4, 2.5, 2.6
+    - Unblocks tasks 1.2.1-1.2.5
+  - **Why completed:** Provides users control over research sources while maintaining quality standards
 - [x] 4.1.1. LangChain + Claude Integration
   - Create API route: `src/routes/api/generate/+server.ts`
   - LangChain's `ChatAnthropic` for Claude integration

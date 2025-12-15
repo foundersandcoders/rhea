@@ -2,8 +2,8 @@
 description: Update a roadmap chain due to a specific reason
 argument-hint: [child file] [parent file] [reason]
 # allowed-tools:
-# model: claude-sonnet-4-5-20250929
-disable-model-invocation: false
+model: claude-sonnet-4-5-20250929
+disable-model-invocation: true
 ---
 
 <UpdateRoadmapChain>
