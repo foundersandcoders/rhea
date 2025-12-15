@@ -3,6 +3,7 @@
   import type { Arc } from "$lib/types/themis";
   import { savedCourses } from "$lib/stores/themisStores";
   import ThemeSelector from "$lib/components/ui/ThemeSelector.svelte";
+  import WorkflowCard from "$lib/components/ui/WorkflowCard.svelte";
 
   function countModules(arcs: Arc[]): number {
     let total = 0;
@@ -36,62 +37,47 @@
 
   <!-- TODO: possibly create hub component? In case I need sub-hubs when functionality expands -->
   <main class="rhea-hub">
-    <!-- TODO: create separate WorkflowCard component -->
     <!-- TODO: address a11y issues from workflow cards -->
     <div class="workflow-cards">
-      <a href="/theia/resume" class="workflow-card theia-card">
-        <img src="/theia/icon.png" alt="Theia" class="card-icon" />
-        <h2>Theia</h2>
-        <p>
-          Upload and manage previously generated course structures and modules.
-        </p>
-        <div class="card-features">
-          <span>Upload course JSON</span>
-          <span>Resume workflows</span>
-          <span>Export formats</span>
-        </div>
-        <div class="card-action">Manage Content →</div>
-      </a>
+      <WorkflowCard
+        workflow="theia"
+        icon="/theia/icon.png"
+        title="Theia"
+        description="Upload and manage previously generated course structures and modules."
+        features={["Upload course JSON", "Resume workflows", "Export formats"]}
+        actionText="Manage Content →"
+        href="/theia/resume"
+      />
 
-      <a href="/metis/update" class="workflow-card metis-card">
-        <img src="/metis/icon.png" alt="Metis" class="card-icon" />
-        <h2>Metis</h2>
-        <p>
-          Create a standalone module specification with projects, skills, and
-          research topics.
-        </p>
-        <div class="card-features">
-          <span>Project briefs</span>
-          <span>Learning objectives</span>
-          <span>Research topics</span>
-        </div>
-        <div class="card-action">Generate Module →</div>
-      </a>
+      <WorkflowCard
+        workflow="metis"
+        icon="/metis/icon.png"
+        title="Metis"
+        description="Create a standalone module specification with projects, skills, and research topics."
+        features={["Project briefs", "Learning objectives", "Research topics"]}
+        actionText="Generate Module →"
+        href="/metis/update"
+      />
 
-      <a href="/tethys/wip" class="workflow-card tethys-card">
-        <img src="/tethys/icon.png" alt="Tethys" class="card-icon" />
-        <h2>Tethys</h2>
-        <p>Create a linked set of modules.</p>
-        <div class="card-features">
-          <pre>Coming Soon</pre>
-        </div>
-        <div class="card-action">Design Arc →</div>
-      </a>
+      <WorkflowCard
+        workflow="tethys"
+        icon="/tethys/icon.png"
+        title="Tethys"
+        description="Create a linked set of modules."
+        features={["Coming Soon"]}
+        actionText="Design Arc →"
+        href="/tethys/wip"
+      />
 
-      <a href="/themis/generate" class="workflow-card themis-card">
-        <img src="/themis/icon.png" alt="Themis" class="card-icon" />
-        <h2>Themis</h2>
-        <p>
-          Create a complete multi-week course with interconnected modules and
-          learning progressions.
-        </p>
-        <div class="card-features">
-          <span>Multiple modules</span>
-          <span>Course structure</span>
-          <span>Learning progression</span>
-        </div>
-        <div class="card-action">Build Course →</div>
-      </a>
+      <WorkflowCard
+        workflow="themis"
+        icon="/themis/icon.png"
+        title="Themis"
+        description="Create a complete multi-week course with interconnected modules and learning progressions."
+        features={["Multiple modules", "Course structure", "Learning progression"]}
+        actionText="Build Course →"
+        href="/themis/generate"
+      />
     </div>
 
     {#if $savedCourses.length > 0}
@@ -174,138 +160,6 @@
     grid-template-columns: repeat(4, 1fr);
     gap: 2rem;
     margin-bottom: 4rem;
-  }
-
-  .workflow-card {
-    border-radius: 12px;
-    padding: 2.5rem;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-    text-decoration: none;
-    color: inherit;
-    display: flex;
-    flex-direction: column;
-    transition: all 0.3s ease;
-    border: 2px solid transparent;
-  }
-
-  /* Each card uses its own workflow palette background */
-  .metis-card {
-    background: var(--metis-bg-subtle);
-  }
-
-  .themis-card {
-    background: var(--themis-bg-subtle);
-  }
-
-  .tethys-card {
-    background: var(--tethys-bg-subtle);
-  }
-
-  .theia-card {
-    background: var(--theia-bg-subtle);
-  }
-
-  .workflow-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-  }
-
-  .metis-card:hover {
-    border-color: var(--metis-fg-alt-dark);
-  }
-
-  .tethys-card:hover {
-    border-color: var(--tethys-fg-alt-dark);
-  }
-
-  .themis-card:hover {
-    border-color: var(--themis-fg-alt-dark);
-  }
-
-  .theia-card:hover {
-    border-color: var(--theia-fg-alt-dark);
-  }
-
-  .card-icon {
-    width: 80px;
-    height: 80px;
-    object-fit: contain;
-    margin-bottom: 1rem;
-  }
-
-  .workflow-card h2 {
-    font-size: 1.75rem;
-    color: var(--palette-foreground);
-    margin: 0 0 1rem 0;
-  }
-
-  .workflow-card p {
-    color: var(--palette-foreground);
-    line-height: 1.6;
-    margin-bottom: 1.5rem;
-    flex-grow: 1;
-  }
-
-  .card-features {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    margin-bottom: 1.5rem;
-    padding: 1rem;
-    background: var(--palette-bg-nav);
-    border-radius: 8px;
-  }
-
-  .card-features span {
-    color: var(--palette-foreground);
-    font-size: 0.9rem;
-    opacity: 0.9;
-  }
-
-  .card-action {
-    color: var(--metis-fg-alt-dark);
-    font-weight: 600;
-    font-size: 1.1rem;
-    text-align: center;
-    padding: 1rem;
-    background: color-mix(in srgb, var(--metis-fg-alt-dark) 10%, transparent);
-    border-radius: 8px;
-    transition: all 0.3s;
-  }
-
-  .themis-card .card-action {
-    color: var(--themis-fg-alt-dark);
-    background: color-mix(in srgb, var(--themis-fg-alt-dark) 10%, transparent);
-  }
-
-  .tethys-card .card-action {
-    color: var(--tethys-fg-alt-dark);
-    background: color-mix(in srgb, var(--tethys-fg-alt-dark) 10%, transparent);
-  }
-
-  .theia-card .card-action {
-    color: var(--theia-fg-alt-dark);
-    background: color-mix(in srgb, var(--theia-fg-alt-dark) 10%, transparent);
-  }
-
-  .themis-card:hover .card-action {
-    background: var(--themis-fg-alt-dark);
-    color: white;
-  }
-
-  .tethys-card:hover .card-action {
-    background: var(--tethys-fg-alt-dark);
-    color: white;
-  }
-
-  .metis-card:hover .card-action {
-    background: var(--metis-fg-alt-dark);
-    color: white;
-  }
-
-  .theia-card:hover .card-action {
-    background: var(--theia-fg-alt-dark);
-    color: white;
   }
 
   .recent-courses {
