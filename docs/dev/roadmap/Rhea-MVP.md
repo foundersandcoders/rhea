@@ -43,6 +43,190 @@
 - [ ] 2a. Implement Themis-style Theia previews for Metis (and Metis-in-Themis)
 - [ ] 2b. Address all ARIA violations
 - [ ] 2c. Update all Svelte legacy approaches and implementations to use Svelte 5
+- [ ] 2d. System-Wide Consistency & Modularity Audit
+  - **Context:** After major refactoring (Oct 2025) and rapid feature development, we need to verify that module generation remains consistent across workflows, with no duplication and proper schema alignment.
+  - **Objective:** Ensure modules generated via Metis (standalone) are structurally identical to modules generated via Themis (course-aware), with all generation logic properly unified and schemas aligned.
+  - **Implementation:**
+    - [ ] 2d.1. Schema Consistency Verification
+      - Compare `<ModuleSpecification>` section in `courseSchema.xml` against `metis/outputSchema.xml`
+      - Document relationship: Should courseSchema reference outputSchema, or duplicate it?
+      - Identify and resolve any structural divergence
+      - Ensure Metadata sections are consistent (currently slight differences exist)
+      - Create architectural decision record (ADR) for schema relationship
+    - [ ] 2d.2. Module Generation Output Comparison
+      - Generate identical module via Metis (standalone workflow)
+      - Generate identical module via Themis (course-aware workflow)
+      - Extract `<ModuleSpecification>` from Themis output
+      - Perform byte-level comparison of module XML
+      - Document expected differences (timestamps, source attribution, input provenance)
+      - Flag any unacceptable differences (structure, validation, content format)
+      - Create test suite for ongoing validation
+    - [ ] 2d.3. Code Duplication Analysis
+      - Scan for duplicate prompt construction logic
+      - Scan for duplicate validation logic
+      - Scan for duplicate XML parsing/serialization
+      - Scan for duplicate domain configuration handling
+      - Verify SSE streaming handler is properly shared
+      - Verify retry logic is properly centralized
+      - Document reuse patterns and identify any remaining duplication
+    - [ ] 2d.4. Type Safety & Interface Consistency
+      - Verify `ModuleSlot` type (Themis) maps cleanly to Metis module structure
+      - Check `GenerateRequest` is properly reusable across both workflows
+      - Identify duplicate interface definitions for same concepts
+      - Ensure TypeScript types enforce schema consistency
+      - Document type relationships in architecture docs
+    - [ ] 2d.5. Documentation & Architecture Records
+      - Create comprehensive ADR documenting module generation architecture
+      - Diagram showing shared utilities and workflow-specific components
+      - Document decision rationale for code reuse vs duplication
+      - Update Technical Overview with audit findings
+      - Add regression test suite to prevent drift
+  - **Success Criteria:**
+    - Metis and Themis modules are structurally identical (excluding expected metadata)
+    - Zero duplication of generation logic
+    - Schemas properly aligned with documented relationship
+    - Type system enforces consistency
+    - Architecture clearly documented for future developers
+  - **Dependencies:** None (audit only, no blocking dependencies)
+  - **Priority:** High - foundation for confident feature development
+- [ ] 2e. Refactor Workflow Cards to Support Multiple Subflows
+  - **Context:** Homepage workflow cards (`src/routes/+page.svelte`) currently link directly to a single route per workflow. As workflows expand (e.g., Metis will have Generator and Updater subflows), we need cards that expose multiple entry points.
+  - **Objective:** Make workflow cards expandable to show subflow options, with dynamic detection of available routes.
+  - **Implementation:**
+    - [ ] 2e.1. Create expandable/toggleable card state
+      - Click workflow card → card expands to show subflow buttons
+      - Click again → card collapses back to summary view
+      - Smooth transition animation
+    - [ ] 2e.2. Detect subflows dynamically
+      - Scan `/src/routes/{workflow}/` directories for subdirectories
+      - Each subdirectory with `+page.svelte` = one subflow
+      - Generate button links automatically (no hardcoding)
+      - Example: `/metis/generate/` and `/metis/update/` → 2 buttons
+    - [ ] 2e.3. Update card UI structure
+      - Summary view (current): icon, title, description, features, "Explore →"
+      - Expanded view (new): same + subflow buttons with descriptions
+      - Each subflow button styled with workflow palette
+    - [ ] 2e.4. Add subflow metadata
+      - Create `+page.ts` or metadata file in each subflow route
+      - Define: `{ title: "Generator", description: "Create modules from scratch", icon?: "..." }`
+      - Card reads metadata to populate button labels
+    - [ ] 2e.5. Update existing workflows
+      - Themis: Add metadata to `/themis/generate/` (currently only subflow)
+      - Theia: Add metadata to `/theia/resume/` (currently only subflow)
+      - Metis: Add metadata to `/metis/update/` and new `/metis/generate/`
+    - [ ] 2e.6. Responsive design
+      - Expanded cards stack vertically on mobile
+      - Subflow buttons remain accessible and tappable
+  - **UI Pattern:**
+    ```
+    [Collapsed Card]
+    ┌─────────────────────┐
+    │ [Icon] Metis        │
+    │ Create standalone   │
+    │ module spec...      │
+    │ • Projects          │
+    │ • Objectives        │
+    │ Explore Metis →     │ ← Click to expand
+    └─────────────────────┘
+
+    [Expanded Card]
+    ┌─────────────────────┐
+    │ [Icon] Metis        │
+    │ Create standalone   │
+    │ module spec...      │
+    │ • Projects          │
+    │ • Objectives        │
+    │                     │
+    │ Choose a workflow:  │
+    │ ┌─────────────────┐ │
+    │ │ Generator       │ │ ← /metis/generate
+    │ │ Create from     │ │
+    │ │ scratch         │ │
+    │ └─────────────────┘ │
+    │ ┌─────────────────┐ │
+    │ │ Updater         │ │ ← /metis/update
+    │ │ Update existing │ │
+    │ │ modules         │ │
+    │ └─────────────────┘ │
+    │                     │
+    │ Collapse ↑          │ ← Click to collapse
+    └─────────────────────┘
+    ```
+  - **Benefits:**
+    - Scalable: Add new subflows by creating routes (no card code changes)
+    - Discoverable: Users see all options without guessing URLs
+    - Progressive disclosure: Complexity hidden until needed
+    - Consistent: Same pattern across all workflows
+  - **Dependencies:** None
+  - **Priority:** High - blocks Metis Generator implementation (Milestone 2.5)
+- [ ] 2f. Audit Remediation: Eliminate Validation Duplication
+  - **Context:** Consistency audit (2025-12-15) identified duplicate module validation logic in `courseValidator.ts` that should reuse `moduleValidator.ts`.
+  - **Objective:** Refactor `courseValidator.ts` to call `validateModuleXML()` instead of reimplementing validation.
+  - **Implementation:**
+    - [ ] 2f.1. Create wrapper function in courseValidator
+      - Wrap `<ModuleSpecification>` content in temporary `<Module>` tags
+      - Call `validateModuleXML(wrappedXml)`
+      - Map errors/warnings with context prefix (e.g., "Arc 1 Module 2: ...")
+    - [ ] 2f.2. Replace `validateModuleSpecification()` implementation
+      - Remove ~85 lines of duplicate validation code (lines 515-600)
+      - Replace with wrapper that calls `validateModuleXML()`
+    - [ ] 2f.3. Add regression tests
+      - Test that Metis and Themis modules pass identical validation
+      - Test that error messages include proper context
+      - Verify cardinality rules enforced consistently
+  - **Benefits:**
+    - Single source of truth for module validation
+    - Automatic consistency as validation rules evolve
+    - ~85 lines of code eliminated
+    - Reduced maintenance burden
+  - **Reference:** `docs/dev/architecture/module-generation-consistency-audit.md` (Section 2.3)
+  - **Effort:** 2-3 hours
+  - **Priority:** Medium
+- [ ] 2g. Audit Remediation: Schema Documentation Alignment
+  - **Context:** Consistency audit identified need for cross-references between schema files to document intentional relationship.
+  - **Objective:** Add XML comments explaining schema relationship between `metis/outputSchema.xml` and `courseSchema.xml`.
+  - **Implementation:**
+    - [ ] 2g.1. Update courseSchema.xml
+      - Add comment at line 180 (before `<ModuleSpecification>`)
+      - Reference: "Structure matches: src/data/templates/metis/outputSchema.xml"
+      - Explain: "Root <Module> tags stripped during serialization"
+    - [ ] 2g.2. Update metis/outputSchema.xml
+      - Add comment at line 1 (file header)
+      - Reference: "When embedded in courses (Themis), <Module> root replaced with <ModuleSpecification>"
+      - Link: "See: courseSchema.xml"
+  - **Benefits:**
+    - Clearer architecture documentation for future developers
+    - Prevents confusion about schema duplication
+    - Documents intentional design decision
+  - **Reference:** `docs/dev/architecture/module-generation-consistency-audit.md` (Section Priority 2)
+  - **Effort:** 15 minutes
+  - **Priority:** Low
+- [ ] 2h. Audit Remediation: Add Regression Tests
+  - **Context:** Consistency audit recommends automated tests to prevent schema drift between Metis and Themis modules.
+  - **Objective:** Create test suite verifying module generation consistency across workflows.
+  - **Implementation:**
+    - [ ] 2h.1. Test: Identical module validation
+      - Generate same module via Metis (standalone)
+      - Generate same module via Themis (course-aware)
+      - Extract `<ModuleSpecification>` content from both
+      - Assert structural equality (ignoring whitespace/metadata)
+    - [ ] 2h.2. Test: Schema structural equality
+      - Parse both `outputSchema.xml` and `courseSchema.xml`
+      - Compare child element structure
+      - Verify `ModuleSpecification` matches `Module` schema
+    - [ ] 2h.3. Test: Validation consistency
+      - Create test module violating each validation rule
+      - Verify both validators reject with same error
+    - [ ] 2h.4. Integrate into CI/CD
+      - Add tests to npm test suite
+      - Run on every PR to prevent drift
+  - **Benefits:**
+    - Prevent future schema drift
+    - CI/CD confidence for architectural changes
+    - Regression protection during refactoring
+  - **Reference:** `docs/dev/architecture/module-generation-consistency-audit.md` (Section Priority 3)
+  - **Effort:** 4-6 hours
+  - **Priority:** Medium
 
 ---
 

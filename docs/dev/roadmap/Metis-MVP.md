@@ -60,6 +60,77 @@
   - [ ] `localStorage` for progress backup
   - [ ] Restore on page load with confirmation
   - [ ] "Clear session" button
+- [ ] 2.5. Replace XML Upload Requirement with Form-Based Workflow
+  - **Context:** Current Metis workflow requires uploading 3 hand-crafted XML files (projects.xml, skills.xml, research.xml). This was appropriate when Rhea's purpose was *updating* existing modules, but creates friction for *creating* new modules from scratch.
+  - **Objective:** Create a Themis-style multi-step form workflow that guides users through module creation without requiring XML knowledge, whilst maintaining the existing generation pipeline.
+  - **Architecture Decision:** Split Metis into two subflows:
+    - **Metis Generator** (`/metis/generate`) - New form-based workflow for creating modules from scratch
+    - **Metis Updater** (`/metis/update`) - Existing XML upload workflow (currently default)
+  - **Implementation:**
+    - [ ] 2.5.1. Design multi-step workflow structure (6 steps)
+      - Step 1: Module Planning (title, theme using TitleInput pattern, description, duration, tech stack, cohort info)
+      - Step 2: Learning Objectives (add/remove objectives with name + details, min 3 required, optional "AI Suggest" button)
+      - Step 3: Project Briefs (add/remove project ideas with overview/focus/criteria, min 2 required)
+      - Step 4: Research Topics (add/remove topics with descriptions, min 5 required)
+      - Step 5: Additional Skills (optional: categories with skills and importance levels)
+      - Step 6: Review & Generate (summary, domain config, generate with SSE progress)
+    - [ ] 2.5.2. Create form components
+      - ModulePlanningForm.svelte
+      - ObjectivesForm.svelte
+      - ProjectBriefsForm.svelte
+      - ResearchTopicsForm.svelte
+      - SkillsForm.svelte (optional)
+      - ModuleReviewForm.svelte
+    - [ ] 2.5.3. Create new route `/metis/generate/+page.svelte`
+      - Six-step workflow matching Themis pattern
+      - Form-based state in metisStores
+      - Transform form data to API request format (same structure as XML workflow)
+    - [ ] 2.5.4. Update homepage workflow cards
+      - Refactor cards to support multiple subflows per workflow (see Rhea Milestone 2e)
+      - Metis card expands to show "Generator" and "Updater" buttons
+      - Dynamically detect subflows from route structure
+    - [ ] 2.5.5. Reuse existing generation pipeline
+      - No changes to API endpoints required
+      - Transform form data into same request structure
+      - Use existing SSE streaming, validation, retry logic
+    - [ ] 2.5.6. Update documentation
+      - User guide for form-based Generator workflow
+      - Maintain XML upload documentation for Updater workflow
+  - **Benefits:**
+    - Aligns Metis UX with Themis patterns for consistency
+    - Removes XML knowledge barrier for new users (Generator)
+    - Preserves XML workflow for power users (Updater)
+    - No changes to battle-tested generation pipeline
+    - Progressive disclosure: complexity only when needed
+  - **Dependencies:** Rhea Milestone 2e (workflow card refactoring)
+- [ ] 2.6. Refactor Metis Updater for Generated Module XMLs
+  - **Context:** Current `/metis/update` route accepts 3 separate XML files (projects.xml, skills.xml, research.xml). This made sense when updating hand-crafted legacy modules, but our AI now generates complete single-file module XMLs.
+  - **Objective:** Modernize the Updater workflow to accept generated module XMLs as primary input, with legacy 3-file upload as fallback.
+  - **Implementation:**
+    - [ ] 2.6.1. Add module XML upload option
+      - Accept single `<Module>` XML file (outputSchema.xml format)
+      - Parse into internal structure for editing/updating
+      - Pre-populate form fields from parsed module
+    - [ ] 2.6.2. Create "legacy mode" toggle
+      - Button: "Use Legacy 3-File Upload"
+      - Shows original projects/skills/research file upload interface
+      - Maintains backward compatibility for old modules
+    - [ ] 2.6.3. Update UI flow
+      - Step 1: Upload module XML (or switch to legacy mode)
+      - Step 2: Review/edit parsed content
+      - Step 3: Configure update parameters (research domains, etc.)
+      - Step 4: Generate updated module
+    - [ ] 2.6.4. Add module comparison features
+      - Show diff between original and generated (stretch goal)
+      - Highlight changes with confidence scoring
+      - Leverage existing changelog/provenance metadata
+  - **Benefits:**
+    - Supports cascade update pattern (AI updates with human oversight)
+    - Modernizes workflow for current use case
+    - Maintains legacy support for historical modules
+    - Leverages existing changelog schema for change tracking
+  - **Dependencies:** 2.5 (Generator workflow establishes patterns)
+  - **Priority:** Medium (after 2.5 complete)
 
 ---
 
