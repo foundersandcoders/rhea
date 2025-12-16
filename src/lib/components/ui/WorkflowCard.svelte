@@ -1,12 +1,18 @@
 <script lang="ts">
+  interface Subflow {
+    title: string;
+    description: string;
+    href: string;
+  }
+
   interface Props {
     workflow: "metis" | "themis" | "tethys" | "theia";
     icon: string;
     title: string;
     description: string;
     features: string[];
-    actionText: string;
-    href: string;
+    href?: string;
+    subflows?: Subflow[];
   }
 
   let {
@@ -15,26 +21,71 @@
     title,
     description,
     features,
-    actionText,
     href,
+    subflows = [],
   }: Props = $props();
+
+  let expanded = $state(false);
+
+  // Build subflows array - if href provided with no subflows, create single subflow
+  const effectiveSubflows =
+    subflows.length > 0
+      ? subflows
+      : href
+        ? [{ title: title, description: description, href }]
+        : [];
+
+  function toggleExpanded(e: MouseEvent) {
+    e.preventDefault();
+    expanded = !expanded;
+  }
 </script>
 
-<a {href} class="workflow-card {workflow}-card">
+<div
+  class="workflow-card {workflow}-card {expanded ? 'expanded' : ''}"
+  role="button"
+  tabindex="0"
+  onclick={toggleExpanded}
+  onkeydown={(e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      toggleExpanded(e);
+    }
+  }}
+>
+  <!-- Always visible -->
   <img src={icon} alt={title} class="card-icon" />
   <h2>{title}</h2>
-  <p>{description}</p>
-  <div class="card-features">
-    {#if features.length > 0 && features[0] === "Coming Soon"}
-      <pre>Coming Soon</pre>
-    {:else}
-      {#each features as feature}
-        <span>{feature}</span>
+
+  {#if !expanded}
+    <!-- Visible when inactive -->
+    <p>{description}</p>
+    <div class="card-features">
+      {#if features.length > 0 && features[0] === "Coming Soon"}
+        <pre>Coming Soon</pre>
+      {:else}
+        {#each features as feature}
+          <span>{feature}</span>
+        {/each}
+      {/if}
+    </div>
+  {:else}
+    <!-- Visible when active -->
+    <div class="subflows-container">
+      {#each effectiveSubflows as subflow}
+        <a
+          href={subflow.href}
+          class="subflow-button"
+          onclick={(e) => e.stopPropagation()}
+        >
+          <strong>{subflow.title}</strong>
+          <span>{subflow.description}</span>
+        </a>
       {/each}
-    {/if}
-  </div>
-  <div class="card-action">{actionText}</div>
-</a>
+    </div>
+    <div class="card-action">Collapse ↑</div>
+  {/if}
+</div>
 
 <style>
   .workflow-card {
@@ -47,6 +98,21 @@
     flex-direction: column;
     transition: all 0.3s ease;
     border: 2px solid transparent;
+    cursor: pointer;
+  }
+
+  /* Remove cursor pointer for link cards */
+  a.workflow-card {
+    cursor: pointer;
+  }
+
+  div.workflow-card {
+    user-select: none;
+  }
+
+  div.workflow-card:focus {
+    outline: 2px solid var(--palette-foreground);
+    outline-offset: 2px;
   }
 
   /* Each card uses its own workflow palette background */
@@ -167,5 +233,63 @@
   .theia-card:hover .card-action {
     background: var(--theia-fg-alt-dark);
     color: white;
+  }
+
+  /* Subflows container */
+  .subflows-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .subflow-button {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 1rem;
+    background: var(--palette-bg-nav);
+    border: 2px solid transparent;
+    border-radius: 8px;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.2s ease;
+  }
+
+  .subflow-button:hover {
+    border-color: var(--palette-foreground);
+    transform: translateX(4px);
+  }
+
+  .subflow-button strong {
+    color: var(--palette-foreground);
+    font-size: 1.1rem;
+  }
+
+  .subflow-button span {
+    color: var(--palette-foreground);
+    opacity: 0.8;
+    font-size: 0.9rem;
+  }
+
+  /* Workflow-specific subflow button hover states */
+  .metis-card .subflow-button:hover {
+    border-color: var(--metis-fg-alt-dark);
+    background: color-mix(in srgb, var(--metis-fg-alt-dark) 5%, var(--palette-bg-nav));
+  }
+
+  .themis-card .subflow-button:hover {
+    border-color: var(--themis-fg-alt-dark);
+    background: color-mix(in srgb, var(--themis-fg-alt-dark) 5%, var(--palette-bg-nav));
+  }
+
+  .tethys-card .subflow-button:hover {
+    border-color: var(--tethys-fg-alt-dark);
+    background: color-mix(in srgb, var(--tethys-fg-alt-dark) 5%, var(--palette-bg-nav));
+  }
+
+  .theia-card .subflow-button:hover {
+    border-color: var(--theia-fg-alt-dark);
+    background: color-mix(in srgb, var(--theia-fg-alt-dark) 5%, var(--palette-bg-nav));
   }
 </style>

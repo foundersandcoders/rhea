@@ -45,7 +45,6 @@
         title="Theia"
         description="Upload and manage previously generated course structures and modules."
         features={["Upload course JSON", "Resume workflows", "Export formats"]}
-        actionText="Manage Content →"
         href="/theia/resume"
       />
 
@@ -55,8 +54,18 @@
         title="Metis"
         description="Create a standalone module specification with projects, skills, and research topics."
         features={["Project briefs", "Learning objectives", "Research topics"]}
-        actionText="Generate Module →"
-        href="/metis/update"
+        subflows={[
+          {
+            title: "Updater",
+            description: "Update existing module specifications",
+            href: "/metis/update",
+          },
+          {
+            title: "Generator",
+            description: "Create modules from scratch",
+            href: "/metis/generate",
+          },
+        ]}
       />
 
       <WorkflowCard
@@ -65,7 +74,6 @@
         title="Tethys"
         description="Create a linked set of modules."
         features={["Coming Soon"]}
-        actionText="Design Arc →"
         href="/tethys/wip"
       />
 
@@ -75,7 +83,6 @@
         title="Themis"
         description="Create a complete multi-week course with interconnected modules and learning progressions."
         features={["Multiple modules", "Course structure", "Learning progression"]}
-        actionText="Build Course →"
         href="/themis/generate"
       />
     </div>
