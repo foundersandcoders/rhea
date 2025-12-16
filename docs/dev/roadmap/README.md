@@ -33,8 +33,8 @@
     <li>✅ British English enforcement in AI generation</li>
     <li>✅ Emoji removed from UI and build scripts</li>
     <li>✅ Dark mode implementation complete</li>
+    <li>✅ System-wide consistency audit complete (2025-12-15)</li>
     <li>UI polish ongoing (ARIA violations pending)</li>
-    <li>📋 System-wide consistency audit needed</li>
   </ul>
 </details>
 
@@ -44,11 +44,13 @@
   <p>✅ <strong>British English enforcement</strong>: All AI-generated content now uses British spelling and terminology via <code>buildBritishEnglishInstructions()</code> integrated into all prompt factories.</p>
   <p>✅ <strong>Professional UI polish</strong>: Removed 54+ emoji instances from UI components and build scripts; improved accessibility and CI/CD compatibility.</p>
   <p>✅ <strong>Dark mode support</strong> (2025-10-29): User-selectable light/dark/system themes with ThemeSelector component, automatic system preference detection, and dark palette variants for all five workflows. 1,807 insertions across 31 files.</p>
+  <p>✅ <strong>System-wide consistency audit</strong> (2025-12-15): Comprehensive verification of module generation consistency across workflows. Finding: Architecture is fundamentally sound with proper code reuse patterns. Identified one validation duplication issue with remediation milestone created. Documentation: <code>docs/dev/architecture/module-generation-consistency-audit.md</code>.</p>
 </details>
 
 <details><summary>Next Up</summary>
   <ul>
-    <li><strong>PRIORITY:</strong> System-wide consistency & modularity audit (Milestone 2d)</li>
+    <li><strong>PRIORITY:</strong> Refactor workflow cards for multiple subflows (Milestone 2e)</li>
+    <li>Eliminate validation duplication (Milestone 2f)</li>
     <li>Address ARIA violations for accessibility</li>
   </ul>
 </details>
@@ -249,7 +251,7 @@
 > [!NOTE]
 > 7 most recent achievements in this codebase
 
-1. **[System-Wide Consistency & Modularity Audit](Rhea-MVP.md#2d-system-wide-consistency--modularity-audit)** (2025-12-15) - Comprehensive audit verifying module generation consistency across Metis/Themis workflows. Finding: Architecture is fundamentally sound with proper code reuse patterns. Identified one duplication issue (validation logic) and created remediation milestones. Documented in `docs/dev/architecture/module-generation-consistency-audit.md` (375 lines). Key outcome: Confidence in unified generation pipeline, schemas properly aligned, zero duplication in prompt/generation logic. Addresses Rhea MVP milestone 2d.
+1. **[System-Wide Consistency & Modularity Audit](Rhea-MVP.md#4a4-system-wide-consistency--modularity-audit--completed-2025-12-15)** (2025-12-15) - Comprehensive audit verifying module generation consistency across Metis/Themis workflows. Finding: Architecture is fundamentally sound with proper code reuse patterns. Identified one duplication issue (validation logic) and created remediation milestones. Documented in `docs/dev/architecture/module-generation-consistency-audit.md` (451 lines). Key outcome: Confidence in unified generation pipeline, schemas properly aligned, zero duplication in prompt/generation logic. Addresses Rhea MVP milestone 2d.
 2. **[Metis: Domain Whitelist Configuration System](Metis-MVP.md#4110-domain-whitelist-configuration-system--completed-2025-10-29)** (2025-10-29) - Complete research domain configuration with hierarchical selection (course → arc → module), blacklisting, and whitelist ignoring. DomainSelector (273 lines) for Metis, ResearchConfigSelector (229 lines) for Themis, plus configuration resolution utilities. 2,811 insertions across 46 files. Addresses MVP milestones 2.4, 2.5, 2.6 and unblocks tasks 1.2.1-1.2.5.
 3. **[Rhea: Dark Mode Implementation](Rhea-MVP.md#4b1a-add-dark-mode-to-ui--completed-2025-10-29)** (2025-10-29) - User-selectable light/dark/system themes with ThemeSelector component (102 lines) and themeStore (150 lines). Generated dark palette variants for all five workflows. Automatic system preference detection with localStorage persistence. 1,807 insertions across 31 files.
 4. **[Themis: Complete Course XML Export](Themis-MVP.md#2-mvp-milestones)** (2025-10-28) - Implemented complete course XML export with embedded module specifications. Generates validatable XML matching courseSchema.xml, validates before download, and provides user feedback via success/error banners. Export button in CourseOverview with automatic validation. Themis MVP now 100% feature-complete. 575 lines across 3 files: outputSerialiser.ts (rewrite), CourseOverview.svelte (+127 lines), documentation.
