@@ -8,7 +8,7 @@ import { ChatAnthropic } from '@langchain/anthropic';
 import type { BaseLanguageModelInput } from '@langchain/core/language_models/base';
 import type { AIMessageChunk } from '@langchain/core/messages';
 import type { Runnable } from '@langchain/core/runnables';
-import type { ChatAnthropicCallOptions } from '@langchain/anthropic/dist/chat_models';
+import type { ChatAnthropicCallOptions } from '@langchain/anthropic';
 import type { ChatClientOptions } from '$lib/types/agent';
 import { AI_RESEARCH_DOMAINS_FLAT } from '$lib/config/researchDomains.js';
 
