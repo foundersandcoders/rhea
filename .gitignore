@@ -19,6 +19,7 @@ scratchpad/
 
 ### --- Svelte --------------------------------
 .svelte-kit/
+.deno-deploy/
 build/
 package
 
