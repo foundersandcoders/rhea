@@ -2,8 +2,7 @@
  * Output Schema Template Loader
  * Loads and formats the output schema for use in generation prompts
  */
-import { readFileSync } from 'fs';
-import { join } from 'path';
+import schemaContent from '../../data/templates/metis/outputSchema.xml?raw';
 import { stripXMLComments } from '$lib/utils/validation/xmlCleaner';
 
 /**
@@ -11,9 +10,6 @@ import { stripXMLComments } from '$lib/utils/validation/xmlCleaner';
  * Comments are preserved for this version (used in prompts)
  */
 export function getOutputSchemaTemplate(): string {
-	const schemaPath = join(process.cwd(), 'src', 'data', 'templates', 'outputSchema.xml');
-	const schemaContent = readFileSync(schemaPath, 'utf-8');
-
 	// Keep comments for the prompt template - they provide guidance
 	return schemaContent.trim();
 }
