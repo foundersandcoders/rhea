@@ -1,0 +1,74 @@
+[
+	{
+		"name": "Post-MVP Hardening",
+		"path": "docs/roadmaps/POST_MVP_HARDENING.md",
+		"project": "Rhea",
+		"archived": false,
+		"externalGates": [],
+		"milestones": [
+			{
+				"id": "M1",
+				"name": "Rhea Platform Polish",
+				"goal": "Clean up cross-cutting platform debt identified by the December 2025 consistency audit and prepare the homepage for multi-subflow workflows.",
+				"tasks": [
+					{ "id": "1RH.1", "description": "Refactor workflow cards to support multiple subflows: expandable card state, dynamic subflow detection from route structure, subflow metadata, responsive layout", "status": "todo", "dependsOn": [], "notes": "Blocks Metis Generator work (2ME.1). High priority." },
+					{ "id": "1RH.2", "description": "Address all ARIA violations across workflow components", "status": "todo", "dependsOn": [] },
+					{ "id": "1RH.3", "description": "Eliminate validation duplication: refactor courseValidator.ts to wrap and call validateModuleXML() instead of reimplementing ~85 lines of module validation logic", "status": "todo", "dependsOn": [], "notes": "Effort: 2-3 hours. From consistency audit remediation." },
+					{ "id": "1RH.4", "description": "Add schema documentation cross-references between metis/outputSchema.xml and courseSchema.xml explaining the embedding relationship", "status": "todo", "dependsOn": [], "notes": "Effort: 15 minutes. Low priority." },
+					{ "id": "1RH.5", "description": "Add regression test suite verifying module generation consistency across Metis/Themis workflows (identical validation, schema structural equality, CI integration)", "status": "todo", "dependsOn": [], "notes": "Effort: 4-6 hours." },
+					{ "id": "1RH.6", "description": "Update all Svelte legacy approaches and implementations to use Svelte 5 idioms throughout", "status": "todo", "dependsOn": [] },
+					{ "id": "1RH.7", "description": "Implement Themis-style Theia previews for Metis (and Metis-in-Themis)", "status": "todo", "dependsOn": [] }
+				]
+			},
+			{
+				"id": "M2",
+				"name": "Metis Form Workflow",
+				"goal": "Replace the XML-upload requirement with a Themis-style guided form workflow, splitting Metis into a form-based Generator and a modernised XML Updater.",
+				"tasks": [
+					{ "id": "2ME.1", "description": "Build Metis Generator (/metis/generate): six-step form workflow (planning, objectives, project briefs, research topics, skills, review & generate), new form components, wired to the existing generation pipeline", "status": "blocked", "dependsOn": ["1RH.1"], "notes": "Architecture split: Generator (form-based, new) vs Updater (XML upload, existing)." },
+					{ "id": "2ME.2", "description": "Refactor Metis Updater (/metis/update) to accept single generated-module XML as primary input, with legacy 3-file upload as a fallback toggle; add module comparison/diff view", "status": "blocked", "dependsOn": ["2ME.1"], "notes": "Priority: medium, after 2ME.1 complete." },
+					{ "id": "2ME.3", "description": "Add boilerplate module text insertion after generation", "status": "todo", "dependsOn": [] },
+					{ "id": "2ME.4", "description": "Ensure generated modules adhere to tech stack requirements", "status": "todo", "dependsOn": [] },
+					{ "id": "2ME.5", "description": "Allow preview sub-section toggling for module spec subsections (objectives, research topics/subtopics, project briefs/skills/examples), applied in both Metis and Metis-in-Themis", "status": "todo", "dependsOn": [] },
+					{ "id": "2ME.6", "description": "Implement the overview/full-generation split pattern (from Themis) in Metis", "status": "todo", "dependsOn": [] },
+					{ "id": "2ME.7", "description": "Allow granularity selection for module generation (separate booleans per section: project briefs, twists, research topics), with fill-in-missing-detail follow-up pass", "status": "todo", "dependsOn": [] },
+					{ "id": "2ME.8", "description": "Create session persistence: localStorage progress backup, restore-on-load confirmation, clear-session button", "status": "todo", "dependsOn": [] }
+				]
+			},
+			{
+				"id": "M3",
+				"name": "Themis Technical Debt",
+				"goal": "Resolve known correctness and performance issues in the Themis module generation flow flagged during the October 2025 component refactor.",
+				"tasks": [
+					{ "id": "3TH.1", "description": "Fix SSE parsing vulnerability: JSON.parse(line.slice(6)) in ModuleGenerationList.svelte throws on malformed server JSON and can crash the generation flow", "status": "todo", "dependsOn": [] },
+					{ "id": "3TH.2", "description": "Fix race condition in SSE stream cleanup: reader removal from activeReaders in a finally block can conflict with onDestroy running concurrently", "status": "todo", "dependsOn": [] },
+					{ "id": "3TH.3", "description": "Fix missing error handling in generateAll: currently continues generating remaining modules after a critical failure instead of stopping", "status": "todo", "dependsOn": [] },
+					{ "id": "3TH.4", "description": "Redesign sequential module generation flow to reduce total wait time on large courses while preserving cross-module coherence (e.g. start module[x] once module[x-1]'s overview is ready, before its full detail completes)", "status": "todo", "dependsOn": [] },
+					{ "id": "3TH.5", "description": "Optimise ModuleGenerationList re-render: extract ModuleCard to a separate component or use keyed blocks so store updates don't re-render the full list on 20+ module courses", "status": "todo", "dependsOn": [] },
+					{ "id": "3TH.6", "description": "UX text and layout polish: bullet-list handling in CourseOverview, Phase 3 (Module Planning) and Phase 4 (Structure Review) text/layout, toggleable module previews, independent toggle state for siblings", "status": "todo", "dependsOn": [] }
+				]
+			},
+			{
+				"id": "M4",
+				"name": "Theia Upload & Export",
+				"goal": "Complete the upload/resume round-trip for module XML and round out export format coverage.",
+				"tasks": [
+					{ "id": "4TE.1", "description": "Implement module XML upload & workflow resume: /theia upload interface, XML-to-store transformer, continue-in-Metis or preview/export actions, validation error handling", "status": "todo", "dependsOn": [] },
+					{ "id": "4TE.2", "description": "Add PDF export format (currently marked \"coming soon\" in UI)", "status": "todo", "dependsOn": [] },
+					{ "id": "4TE.3", "description": "Add export analytics/usage tracking", "status": "todo", "dependsOn": [] }
+				]
+			},
+			{
+				"id": "M5",
+				"name": "Dormant Modules Backlog",
+				"goal": "Track not-yet-started submodules so they stay visible without competing with active work.",
+				"tasks": [
+					{ "id": "5BK.1", "description": "Tethys: standalone Arc Designer, currently embedded within Themis; on hold until Themis & Metis MVP fully implemented", "status": "deferred", "dependsOn": [] },
+					{ "id": "5BK.2", "description": "Thalassa: Atomic Learning Assembler, not yet started, requirements not yet defined with user", "status": "deferred", "dependsOn": [] },
+					{ "id": "5BK.3", "description": "Mnemosyne: Storage & Retrieval, not scheduled until after MVP", "status": "deferred", "dependsOn": [] },
+					{ "id": "5BK.4", "description": "Eos: requirements not yet defined with user", "status": "deferred", "dependsOn": [] }
+				]
+			}
+		]
+	}
+]
